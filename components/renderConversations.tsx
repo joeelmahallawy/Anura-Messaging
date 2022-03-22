@@ -184,7 +184,6 @@ const RenderConversations = ({
                           <Center justifyContent="flex-end" gap={5}>
                             <Button
                               onClick={async () => {
-                                console.log(conversationsFile[convo.tokenID]);
                                 const messages = await getMessagesFromJSON(
                                   convo.tokenID
                                 );

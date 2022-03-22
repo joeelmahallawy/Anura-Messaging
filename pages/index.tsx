@@ -41,11 +41,6 @@ const IndexPage = () => {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      const response = await fetch(`/api/getConvo?q=1`, {});
-      const data = await response.json();
-      console.log("SOME DATA:", data);
-    })();
     doFetch();
   }, []);
 

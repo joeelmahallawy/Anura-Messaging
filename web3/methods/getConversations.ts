@@ -6,7 +6,6 @@ const getConversations = async (contract, wallet, ipfs?) => {
   const activeConversations: Conversation[] = await contract.methods // get all active conversations
     .getMyActiveConversations(wallet[0])
     .call({ from: wallet[0] });
-  console.log("ACTIVE CONVOS:", activeConversations);
 
   const allConversations = [];
 
