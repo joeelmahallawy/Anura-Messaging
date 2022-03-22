@@ -19,71 +19,76 @@ import RenderConversations from "../components/renderConversations";
 import { BsFillSunFill, BsFillMoonFill } from "react-icons/bs";
 
 const IndexPage = () => {
-  const { toggleColorMode, colorMode } = useColorMode();
-  const [state, doFetch] = useAsyncFn(async () => {
-    // @ts-expect-error
-    if (!window.ethereum) alert("Please install Metamask");
-    try {
-      const contract = await loadContract(); // load contract
+  // const { toggleColorMode, colorMode } = useColorMode();
+  // const [state, doFetch] = useAsyncFn(async () => {
+  //   // @ts-expect-error
+  //   if (!window.ethereum) alert("Please install Metamask");
+  //   try {
+  //     const contract = await loadContract(); // load contract
 
-      const wallet = await web3.eth.requestAccounts(); // grab wallet from metamask
+  //     const wallet = await web3.eth.requestAccounts(); // grab wallet from metamask
 
-      const conversations = await getConversations(contract, wallet);
+  //     const conversations = await getConversations(contract, wallet);
 
-      return {
-        contract,
-        wallet: wallet[0],
-        conversations,
-      };
-    } catch (err) {
-      alert(err.message);
-    }
-  }, []);
+  //     return {
+  //       contract,
+  //       wallet: wallet[0],
+  //       conversations,
+  //     };
+  //   } catch (err) {
+  //     alert(err.message);
+  //   }
+  // }, []);
 
   useEffect(() => {
-    doFetch();
+    (async () => {
+      const response = await fetch("/api/getConvo");
+      const data = await response.json();
+      console.log("SOME DATA:", data);
+    })();
+    // doFetch();
   }, []);
 
-  if (!state.value) {
-    return (
-      // <Button onClick={}>click for emit</Button>
-      <Center h="100vh">
-        <Spinner size="xl" speed="1s" />
-      </Center>
-    );
-  }
+  // if (!state.value) {
+  //   return (
+  //     // <Button onClick={}>click for emit</Button>
+  //     <Center h="100vh">
+  //       <Spinner size="xl" speed="1s" />
+  //     </Center>
+  //   );
+  // }
 
-  return (
-    <Box>
-      <Center
-        p="2.5%"
-        flexDir="column"
-        bg={colorMode == "light" ? "gray.200" : "gray.900"}
-      >
-        <Center flexDir="column">
-          <Heading>Welcome to Anura's ERC-1155 emailing system!</Heading>
-          <Text color="gray">
-            The first system that makes it so easy to send cryptographic
-            messages
-          </Text>
+  // return (
+  //   <Box>
+  //     <Center
+  //       p="2.5%"
+  //       flexDir="column"
+  //       bg={colorMode == "light" ? "gray.200" : "gray.900"}
+  //     >
+  //       <Center flexDir="column">
+  //         <Heading>Welcome to Anura's ERC-1155 emailing system!</Heading>
+  //         <Text color="gray">
+  //           The first system that makes it so easy to send cryptographic
+  //           messages
+  //         </Text>
 
-          <Button ml="auto" onClick={toggleColorMode}>
-            {colorMode == "dark" ? <BsFillSunFill /> : <BsFillMoonFill />}
-          </Button>
-        </Center>
-      </Center>
-      <Center p="1%" borderRadius={10} flexDir="column" w="70%" m="0 auto">
-        {state.value.conversations ? (
-          <RenderConversations state={state.value && state.value} />
-        ) : (
-          <Spinner size="xl" speed="1s" />
-        )}
+  //         <Button ml="auto" onClick={toggleColorMode}>
+  //           {colorMode == "dark" ? <BsFillSunFill /> : <BsFillMoonFill />}
+  //         </Button>
+  //       </Center>
+  //     </Center>
+  //     <Center p="1%" borderRadius={10} flexDir="column" w="70%" m="0 auto">
+  //       {state.value.conversations ? (
+  //         <RenderConversations state={state.value && state.value} />
+  //       ) : (
+  //         <Spinner size="xl" speed="1s" />
+  //       )}
 
-        <StartConvoModal state={state} />
-      </Center>
-    </Box>
-  );
-  // return null;
+  //       <StartConvoModal state={state} />
+  //     </Center>
+  //   </Box>
+  // );
+  return null;
 };
 
 export default IndexPage;
