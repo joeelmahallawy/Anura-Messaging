@@ -26,6 +26,7 @@ const postConversation = async (req: NextApiRequest, res: NextApiResponse) => {
         console.log("Successfully wrote file");
       }
     });
+
     // return size in MB
     res.json(fileSizeInMegabytes);
   } catch (err) {

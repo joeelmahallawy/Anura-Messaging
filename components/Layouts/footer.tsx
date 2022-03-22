@@ -23,7 +23,6 @@ const Footer = () => {
         >
           <FaDiscord />
         </Link>
-
         <Link
           _hover={{ color: "#188DD5" }}
           color="#1DA1F2"
