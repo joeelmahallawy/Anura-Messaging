@@ -5,14 +5,15 @@ import fs from "fs";
 const getConversation = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     // const { query } = req;
-
+    const { tokenID } = req.headers;
     // write to json file
     const data = fs.readFileSync(`./conversations.json`);
     // const someData = await fetch("./conversations.json");
     // const data = await someData.json();
 
     // return size in MB
-    res.json(data);
+    // @ts-expect-error
+    res.json(data[tokenID]);
   } catch (err) {
     res.status(err.status).json({ err: err.message });
   }

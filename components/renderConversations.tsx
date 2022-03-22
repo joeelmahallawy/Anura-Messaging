@@ -22,9 +22,9 @@ import encrypt from "../web3/cryptography/encrypt";
 import decrypt from "../web3/cryptography/decrypt";
 import sendMessage from "../helpers/sendMessage";
 import RenderMessages from "./renderMessages";
-import getConversations from "../web3/methods/getConversations";
-import refreshConvo from "../web3/methods/refreshConvo";
+
 import conversationsFile from "../conversations.json";
+import getMessagesFromJSON from "../helpers/getConvosFromJSON";
 
 const RenderConversations = ({
   state: { wallet, conversations, contract },
@@ -183,11 +183,12 @@ const RenderConversations = ({
                           />
                           <Center justifyContent="flex-end" gap={5}>
                             <Button
-                              onClick={() => {
+                              onClick={async () => {
                                 console.log(conversationsFile[convo.tokenID]);
-                                setAllMessages([
-                                  ...conversationsFile[convo.tokenID],
-                                ]);
+                                const messages = await getMessagesFromJSON(
+                                  convo.tokenID
+                                );
+                                setAllMessages([...messages]);
                               }}
                             >
                               Refresh messages
