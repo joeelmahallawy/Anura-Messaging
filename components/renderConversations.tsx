@@ -22,7 +22,6 @@ import encrypt from "../web3/cryptography/encrypt";
 import decrypt from "../web3/cryptography/decrypt";
 import sendMessage from "../helpers/sendMessage";
 import RenderMessages from "./renderMessages";
-
 import conversationsFile from "../conversations.json";
 import getMessagesFromJSON from "../helpers/getConvosFromJSON";
 
@@ -43,11 +42,12 @@ const RenderConversations = ({
   const [convos, setconvos] = useState(conversations);
   const toast = useToast();
 
+  console.log("MY CONVERSATIONS ABBYL", conversations);
   return (
     <Center flexDir="column" w="100%">
       {convos.map((convo, i) => {
         const [hasBeenChecked, sethasBeenChecked] = useState(
-          convo.messages
+          convo.messages.length
             ? convo.messages[convo.messages.length - 1].sender != wallet
             : false
         );

@@ -73,7 +73,8 @@ const IndexPage = () => {
         </Center>
       </Center>
       <Center p="1%" borderRadius={10} flexDir="column" w="70%" m="0 auto">
-        {state.value.conversations ? (
+        {console.log(state.value?.conversations)}
+        {state.value?.conversations ? (
           <RenderConversations state={state.value && state.value} />
         ) : (
           <Spinner size="xl" speed="1s" />

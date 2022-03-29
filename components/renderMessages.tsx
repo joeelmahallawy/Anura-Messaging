@@ -22,7 +22,7 @@ const RenderMessages = ({ convo, wallet, messages }) => {
         </Flex>
       );
     }
-
+    console.log(convo);
     return (
       <Flex
         maxW="50%"
