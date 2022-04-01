@@ -156,7 +156,6 @@ const RenderConversations = ({
                                 message && // if message isn't empty
                                 message.trim() // message trim isn't empty
                               ) {
-                                console.log("YES MARKETING GENIUS", message);
                                 // encrypt message
                                 const encryptedMessageToSend = {
                                   sender: wallet,
