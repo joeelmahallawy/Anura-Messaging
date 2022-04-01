@@ -17,6 +17,8 @@ import loadContract, { web3 } from "../web3/loadContract";
 import getConversations from "../web3/methods/getConversations";
 import RenderConversations from "../components/renderConversations";
 import { BsFillSunFill, BsFillMoonFill } from "react-icons/bs";
+import { database } from "../firebase";
+import { onValue, ref, set } from "firebase/database";
 
 const IndexPage = () => {
   const { toggleColorMode, colorMode } = useColorMode();
@@ -41,6 +43,13 @@ const IndexPage = () => {
   }, []);
 
   useEffect(() => {
+    const convoRef = ref(database, `convos/${"1"}`);
+    onValue(convoRef, (snapshot) => {
+      const { message } = snapshot.val();
+      console.log("real time data:", message);
+      // updateStarCount(postElement, data);
+    });
+
     doFetch();
   }, []);
 

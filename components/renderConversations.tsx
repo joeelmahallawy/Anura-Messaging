@@ -6,17 +6,14 @@ import {
   Modal,
   ModalBody,
   Text,
-  ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
   useDisclosure,
   Flex,
-  Heading,
-  useToast,
 } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/textarea";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Conversation } from "../interfaces";
 import encrypt from "../web3/cryptography/encrypt";
 import decrypt from "../web3/cryptography/decrypt";
@@ -24,6 +21,8 @@ import sendMessage from "../helpers/sendMessage";
 import RenderMessages from "./renderMessages";
 import conversationsFile from "../conversations.json";
 import getMessagesFromJSON from "../helpers/getConvosFromJSON";
+import { onValue, ref } from "firebase/database";
+import { database } from "../firebase";
 
 const RenderConversations = ({
   state: { wallet, conversations, contract },
@@ -40,11 +39,10 @@ const RenderConversations = ({
   const [currentModalOpen, setCurrentModalOpen] = useState<number>();
   const messageBox = useRef();
   const [convos, setconvos] = useState(conversations);
-  const toast = useToast();
 
-  console.log("MY CONVERSATIONS ABBYL", conversations);
   return (
     <Center flexDir="column" w="100%">
+      {/* IF NOT SETTING CONVOS, CHANGE TO conversations.map() */}
       {convos.map((convo, i) => {
         const [hasBeenChecked, sethasBeenChecked] = useState(
           convo.messages.length
@@ -52,6 +50,15 @@ const RenderConversations = ({
             : false
         );
         const [allMessages, setAllMessages] = useState(convo.messages);
+        useEffect(() => {
+          const convoRef = ref(database, `convos/${convo.tokenID}`);
+          onValue(convoRef, (snapshot) => {
+            const { message } = snapshot.val();
+            console.log("okay so this is when we load:", message);
+            setAllMessages([...message]);
+          });
+        }, []);
+
         return (
           <Center mt={3} flexDir="column" key={i} w="100%">
             <Button
@@ -64,8 +71,6 @@ const RenderConversations = ({
               }}
               w="100%"
               display="flex"
-              // flexDir="column"
-              // textAlign="left"
               justifyContent="space-between"
             >
               <Text textAlign="right" fontWeight="500">
@@ -100,27 +105,6 @@ const RenderConversations = ({
                     <span style={{ fontWeight: "bold" }}>
                       {convo.messages[0].receiver}
                     </span>
-                    {/* <Button
-                      ml="auto"
-                      colorScheme="red"
-                      onClick={async () => {
-                        await contract.methods
-                          .blockUser(convo.messages[0].receiver, convo.tokenID)
-                          .send({ from: wallet })
-                          .then((res) => {
-                            console.log(res);
-                            return toast({
-                              title: "User blocked!", // prompt success message
-                              description: `Tx hash: ${res.transactionHash}`,
-                              status: "success",
-                              duration: 9000,
-                              isClosable: true,
-                            });
-                          });
-                      }}
-                    >
-                      Block
-                    </Button> */}
                   </ModalHeader>
                   <ModalBody>
                     <FormControl
@@ -146,7 +130,6 @@ const RenderConversations = ({
                             wallet={wallet}
                           />
                         </Flex>
-
                         <Flex
                           flexDir="column"
                           mt={3}
@@ -171,6 +154,7 @@ const RenderConversations = ({
                                 setAllMessages([...allMessages]);
                                 // send message
                                 sendMessage(convo, allMessages);
+
                                 // @ts-ignore
                                 messageBox.current.value = ""; // set message box as empty
                                 setMessage("");
@@ -182,16 +166,6 @@ const RenderConversations = ({
                             }}
                           />
                           <Center justifyContent="flex-end" gap={5}>
-                            <Button
-                              onClick={async () => {
-                                const messages = await getMessagesFromJSON(
-                                  convo.tokenID
-                                );
-                                setAllMessages([...messages]);
-                              }}
-                            >
-                              Refresh messages
-                            </Button>
                             <Button
                               // ml="auto"
                               colorScheme="linkedin"
@@ -231,3 +205,28 @@ const RenderConversations = ({
   );
 };
 export default RenderConversations;
+
+// BLOCK USER TODO:
+{
+  /* <Button
+      ml="auto"
+      colorScheme="red"
+      onClick={async () => {
+        await contract.methods
+          .blockUser(convo.messages[0].receiver, convo.tokenID)
+          .send({ from: wallet })
+          .then((res) => {
+            console.log(res);
+            return toast({
+              title: "User blocked!", // prompt success message
+              description: `Tx hash: ${res.transactionHash}`,
+              status: "success",
+              duration: 9000,
+              isClosable: true,
+            });
+          });
+      }}
+    >
+    Block
+  </Button> */
+}
