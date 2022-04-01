@@ -18,23 +18,23 @@ import { BsFillSunFill, BsFillMoonFill } from "react-icons/bs";
 import { database } from "../firebase";
 import { onValue, ref, set } from "firebase/database";
 import { useRouter } from "next/router";
-import switchNetworkBinance from "../web3/switchNetworkBinance";
+import switchNetworkPolygon from "../web3/switchNetworkPolygon";
 
-const BINANCE_TEST_NET_CHAIN_ID = 97;
+const POLYGON_MAIN_NET_CHAIN_ID = 137;
 
 const IndexPage = () => {
   const router = useRouter();
   const { toggleColorMode, colorMode } = useColorMode();
   const [state, doFetch] = useAsyncFn(async () => {
-    if ((await web3.eth.getChainId()) != BINANCE_TEST_NET_CHAIN_ID) {
+    if ((await web3.eth.getChainId()) != POLYGON_MAIN_NET_CHAIN_ID) {
       // check if we're not on the right chain
-      switchNetworkBinance()
+      switchNetworkPolygon()
         .then(async () => {
           router.reload();
         })
         .catch(async () => {
           try {
-            await switchNetworkBinance();
+            await switchNetworkPolygon();
           } catch (err) {
             // if failed, prompt user
             alert(err.message);
