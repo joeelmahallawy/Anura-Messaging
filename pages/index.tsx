@@ -62,7 +62,7 @@ const IndexPage = () => {
         bg={colorMode == "light" ? "gray.200" : "gray.900"}
       >
         <Center flexDir="column">
-          <Heading>Welcome to Anura's ERC-1155 emailing system!</Heading>
+          <Heading>Welcome to Anura's ERC-1155 messaging system!</Heading>
           <Text color="gray">
             The first system that makes it so easy to send cryptographic
             messages
