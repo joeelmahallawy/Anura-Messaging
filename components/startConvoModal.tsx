@@ -27,6 +27,7 @@ const startConvoModal = ({ state }) => {
   const initialRef = React.useRef();
   const finalRef = React.useRef();
   const router = useRouter();
+  console.log(conversationReceiver);
 
   return (
     <>

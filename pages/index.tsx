@@ -49,7 +49,7 @@ const IndexPage = () => {
         const wallet = await web3.eth.requestAccounts(); // grab wallet from metamask
 
         const conversations = await getConversations(contract, wallet);
-
+        console.log(conversations);
         return {
           contract,
           wallet: wallet[0],

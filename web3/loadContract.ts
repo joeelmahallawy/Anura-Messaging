@@ -3,7 +3,7 @@ import Web3 from "web3";
 const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 export { web3 };
 const loadContract = async () => {
-  const contractAddress = "0x1733F3a00fA9312512f0A83b277D08C0c8b9fbCe";
+  const contractAddress = "0x91a6d29e04803db2b45f192196d84fd77d3d4592";
   const contract = new web3.eth.Contract(
     [
       {
