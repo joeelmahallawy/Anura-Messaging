@@ -3,7 +3,7 @@ import Web3 from "web3";
 const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 export { web3 };
 const loadContract = async () => {
-  const contractAddress = "0x4fDc5487D4769D5ac6b68041BBB5C83e45dc8476";
+  const contractAddress = "0xbeBe7E5fef7731E0677C92a2748b68D94a0d8cC4";
   const contract = new web3.eth.Contract(
     [
       {
@@ -25,7 +25,7 @@ const loadContract = async () => {
           },
         ],
         name: "OnlyCoordinatorCanFulfill",
-        // @ts-ignore
+        // @ts-expect-error
         type: "error",
       },
       {

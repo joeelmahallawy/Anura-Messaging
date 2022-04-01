@@ -16,11 +16,8 @@ import { Textarea } from "@chakra-ui/textarea";
 import React, { useEffect, useRef, useState } from "react";
 import { Conversation } from "../interfaces";
 import encrypt from "../web3/cryptography/encrypt";
-import decrypt from "../web3/cryptography/decrypt";
 import sendMessage from "../helpers/sendMessage";
 import RenderMessages from "./renderMessages";
-import conversationsFile from "../conversations.json";
-import getMessagesFromJSON from "../helpers/getConvosFromJSON";
 import { onValue, ref } from "firebase/database";
 import { database } from "../firebase";
 
@@ -38,23 +35,29 @@ const RenderConversations = ({
   const [message, setMessage] = useState("");
   const [currentModalOpen, setCurrentModalOpen] = useState<number>();
   const messageBox = useRef();
-  const [convos, setconvos] = useState(conversations);
 
   return (
     <Center flexDir="column" w="100%">
-      {/* IF NOT SETTING CONVOS, CHANGE TO conversations.map() */}
-      {convos.map((convo, i) => {
+      {/* can also be used as (convos) */}
+      {conversations.map((convo, i) => {
+        const messageContainer = useRef();
         const [hasBeenChecked, sethasBeenChecked] = useState(
           convo.messages.length
             ? convo.messages[convo.messages.length - 1].sender != wallet
             : false
         );
         const [allMessages, setAllMessages] = useState(convo.messages);
+
         useEffect(() => {
           const convoRef = ref(database, `convos/${convo.tokenID}`);
           onValue(convoRef, (snapshot) => {
             const { message } = snapshot.val();
-            console.log("okay so this is when we load:", message);
+            setTimeout(() => {
+              // @ts-expect-error
+              messageContainer?.current?.scrollTop =
+                // @ts-expect-error
+                messageContainer?.current?.scrollHeight;
+            }, 1);
             setAllMessages([...message]);
           });
         }, []);
@@ -68,6 +71,12 @@ const RenderConversations = ({
                 setCurrentModalOpen(i);
                 sethasBeenChecked(true);
                 onOpen();
+                setTimeout(() => {
+                  // @ts-expect-error
+                  messageContainer?.current?.scrollTop =
+                    // @ts-expect-error
+                    messageContainer?.current?.scrollHeight;
+                }, 1);
               }}
               w="100%"
               display="flex"
@@ -76,7 +85,6 @@ const RenderConversations = ({
               <Text textAlign="right" fontWeight="500">
                 Conversation with{" "}
                 <span style={{ fontWeight: "bold" }}>
-                  {/* {console.log(convo)} */}
                   {convo.messages[0].receiver == wallet
                     ? convo.messages[0].sender
                     : convo.messages[0].receiver}
@@ -115,11 +123,15 @@ const RenderConversations = ({
                     >
                       <Flex h="100%" flexDir="column">
                         <Flex
+                          position="relative"
+                          flexDirection="column-reverse"
+                          bottom={0}
                           overflowY="scroll"
+                          // overflow="auto"
                           border="1px solid black"
                           borderRadius={10}
                           h="52.5vh"
-                          // bg="red"
+                          ref={messageContainer}
                           p={3}
                           gap={3}
                           flexDir="column"
@@ -140,9 +152,11 @@ const RenderConversations = ({
                             ref={messageBox}
                             onKeyDown={async (e) => {
                               if (
-                                e.key === "Enter" && // when user presses enter
-                                message != "" // and message isn't empty
+                                e.key === "Enter" && // if user presses enter
+                                message && // if message isn't empty
+                                message.trim() // message trim isn't empty
                               ) {
+                                console.log("YES MARKETING GENIUS", message);
                                 // encrypt message
                                 const encryptedMessageToSend = {
                                   sender: wallet,
@@ -154,10 +168,13 @@ const RenderConversations = ({
                                 setAllMessages([...allMessages]);
                                 // send message
                                 sendMessage(convo, allMessages);
-
                                 // @ts-ignore
                                 messageBox.current.value = ""; // set message box as empty
                                 setMessage("");
+                                // @ts-expect-error
+                                messageContainer?.current?.scrollTop =
+                                  // @ts-expect-error
+                                  messageContainer?.current?.scrollHeight;
                               }
                               setMessage(e.currentTarget.value);
                             }}
@@ -185,6 +202,10 @@ const RenderConversations = ({
                                   // @ts-ignore
                                   messageBox.current.value = ""; // set message box as empty
                                   setMessage("");
+                                  // @ts-expect-error
+                                  messageContainer?.current?.scrollTop =
+                                    // @ts-expect-error
+                                    messageContainer?.current?.scrollHeight;
                                 }
                               }}
                             >

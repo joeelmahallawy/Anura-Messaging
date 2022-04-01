@@ -43,19 +43,11 @@ const IndexPage = () => {
   }, []);
 
   useEffect(() => {
-    const convoRef = ref(database, `convos/${"1"}`);
-    onValue(convoRef, (snapshot) => {
-      const { message } = snapshot.val();
-      console.log("real time data:", message);
-      // updateStarCount(postElement, data);
-    });
-
     doFetch();
   }, []);
 
   if (!state.value) {
     return (
-      // <Button onClick={}>click for emit</Button>
       <Center h="100vh">
         <Spinner size="xl" speed="1s" />
       </Center>
@@ -82,7 +74,6 @@ const IndexPage = () => {
         </Center>
       </Center>
       <Center p="1%" borderRadius={10} flexDir="column" w="70%" m="0 auto">
-        {console.log(state.value?.conversations)}
         {state.value?.conversations ? (
           <RenderConversations state={state.value && state.value} />
         ) : (

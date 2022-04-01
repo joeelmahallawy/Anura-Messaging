@@ -12,14 +12,14 @@ let analytics;
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCgTN9-DDeWvZOev6Gj2t0xqEHXm3yoh74",
-  authDomain: "anura-messaging.firebaseapp.com",
-  databaseURL: "https://anura-messaging-default-rtdb.firebaseio.com",
-  projectId: "anura-messaging",
-  storageBucket: "anura-messaging.appspot.com",
-  messagingSenderId: "179043958828",
-  appId: "1:179043958828:web:554efe7e16799d1a0e1189",
-  measurementId: "G-PN9KVYT6P6",
+  apiKey: process.env.NEXT_PUBLIC_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
+  databaseURL: process.env.NEXT_PUBLIC_DB_URL,
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID,
 };
 
 if (typeof window !== "undefined") {

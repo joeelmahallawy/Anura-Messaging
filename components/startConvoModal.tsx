@@ -18,6 +18,7 @@ import React, { useState } from "react";
 import { web3 } from "../web3/loadContract";
 import moment from "moment";
 import { useRouter } from "next/router";
+import write from "../helpers/write";
 
 const startConvoModal = ({ state }) => {
   const [conversationReceiver, setConversationReceiver] = useState<string>();
@@ -32,7 +33,6 @@ const startConvoModal = ({ state }) => {
       <Button ml="auto" mt={3} onClick={onOpen} colorScheme="linkedin">
         Start new conversation
       </Button>
-
       <Modal
         initialFocusRef={initialRef}
         finalFocusRef={finalRef}
@@ -72,18 +72,8 @@ const startConvoModal = ({ state }) => {
                         .getCurrentToken()
                         .call();
 
-                      const response = await fetch("/api/postConvo", {
-                        method: "POST",
-                        body: JSON.stringify({
-                          tokenID: currentTokenId,
-                          message,
-                        }),
-                      });
-                      if (!response.ok)
-                        throw new Error(
-                          "Could not start conversation, please try again"
-                        );
-                      // console.log(res); // log all the response details
+                      write(currentTokenId, message); // write message
+
                       router.reload();
                       return toast({
                         title: "Conversation started!", // prompt success message
@@ -100,7 +90,6 @@ const startConvoModal = ({ state }) => {
               } else {
                 alert("Please enter an address");
               }
-              // console.log(newConversationTokenID);
             }}
           >
             <ModalBody pb={6}>
@@ -117,7 +106,6 @@ const startConvoModal = ({ state }) => {
                 />
               </FormControl>
             </ModalBody>
-
             <ModalFooter>
               <Button type="submit" colorScheme="blue" mr={3}>
                 Start
