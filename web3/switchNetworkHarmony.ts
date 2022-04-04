@@ -1,4 +1,4 @@
-const switchNetworkPolygon = async () => {
+const switchNetworkHarmony = async () => {
   try {
     // @ts-expect-error
     await window.ethereum.request({
@@ -32,4 +32,4 @@ const switchNetworkPolygon = async () => {
   }
 };
 
-export default switchNetworkPolygon;
+export default switchNetworkHarmony;

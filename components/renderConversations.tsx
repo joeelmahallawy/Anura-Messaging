@@ -20,6 +20,8 @@ import sendMessage from "../helpers/sendMessage";
 import RenderMessages from "./renderMessages";
 import { onValue, ref } from "firebase/database";
 import { database } from "../firebase";
+import CustomizeName from "./customizeName";
+import isMyWallet from "../helpers/getOtherUserWallet";
 
 const RenderConversations = ({
   state: { wallet, conversations, contract },
@@ -48,6 +50,15 @@ const RenderConversations = ({
         );
         const [allMessages, setAllMessages] = useState(convo.messages);
 
+        // customize name if it hasn't been given a name already
+        const [customName, setCustomName] = useState(
+          isMyWallet(wallet, convo.messages[0].receiver)
+            ? localStorage.getItem(convo.messages[0].sender) ||
+                convo.messages[0].sender
+            : localStorage.getItem(convo.messages[0].receiver) ||
+                convo.messages[0].receiver
+        );
+
         useEffect(() => {
           const convoRef = ref(database, `convos/${convo.tokenID}`);
           onValue(convoRef, (snapshot) => {
@@ -65,6 +76,7 @@ const RenderConversations = ({
         return (
           <Center mt={3} flexDir="column" key={i} w="100%">
             <Button
+              _focus={{}}
               p="4%"
               mt={3}
               onClick={() => {
@@ -111,8 +123,18 @@ const RenderConversations = ({
                 <ModalContent h="85vh">
                   <ModalHeader display="flex" justifyContent="space-between">
                     <span style={{ fontWeight: "bold" }}>
-                      {convo.messages[0].receiver}
+                      {/* If customized name, show custom name, otherwise show address */}
+                      {customName}
                     </span>
+                    {/* TODO: */}
+                    <CustomizeName
+                      setName={setCustomName}
+                      otherWallet={
+                        convo.messages[0].receiver == wallet
+                          ? convo.messages[0].sender
+                          : convo.messages[0].receiver
+                      }
+                    />
                   </ModalHeader>
                   <ModalBody>
                     <FormControl
@@ -127,7 +149,6 @@ const RenderConversations = ({
                           flexDirection="column-reverse"
                           bottom={0}
                           overflowY="scroll"
-                          // overflow="auto"
                           border="1px solid black"
                           borderRadius={10}
                           h="52.5vh"
@@ -186,7 +207,10 @@ const RenderConversations = ({
                               // ml="auto"
                               colorScheme="linkedin"
                               onClick={async () => {
-                                if (message != "") {
+                                if (
+                                  message && // if message isn't empty
+                                  message.trim()
+                                ) {
                                   // encrypt message
                                   const encryptedMessageToSend = {
                                     sender: wallet,

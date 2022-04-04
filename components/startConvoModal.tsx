@@ -19,6 +19,9 @@ import { web3 } from "../web3/loadContract";
 import moment from "moment";
 import { useRouter } from "next/router";
 import write from "../helpers/write";
+import { onValue, ref, set } from "firebase/database";
+import { database } from "../firebase";
+import getConversations from "../web3/methods/getConversations";
 
 const startConvoModal = ({ state }) => {
   const [conversationReceiver, setConversationReceiver] = useState<string>();
@@ -27,7 +30,6 @@ const startConvoModal = ({ state }) => {
   const initialRef = React.useRef();
   const finalRef = React.useRef();
   const router = useRouter();
-  console.log(conversationReceiver);
 
   return (
     <>
@@ -73,14 +75,15 @@ const startConvoModal = ({ state }) => {
                         .getCurrentToken()
                         .call();
 
-                      write(currentTokenId, message); // write message
+                      console.log("CURRENT TOKEN ID", currentTokenId);
+                      await write(currentTokenId, message); // write message
 
-                      router.reload();
+                      // router.reload(); // FIXME: possible bug here
                       return toast({
                         title: "Conversation started!", // prompt success message
-                        description: `Tx hash: ${res.transactionHash}`,
+                        description: `Please refresh to see new conversation`,
                         status: "success",
-                        duration: 9000,
+                        duration: 5000,
                         isClosable: true,
                       });
                     } catch (err) {

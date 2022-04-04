@@ -10,7 +10,6 @@ const RenderMessages = ({ convo, wallet, messages }) => {
       return (
         <Flex
           fontSize="14px"
-          // bg="gray.200"
           bg={colorMode == "light" ? "gray.200" : "gray.900"}
           borderRadius={5}
           w="100%"
@@ -27,7 +26,6 @@ const RenderMessages = ({ convo, wallet, messages }) => {
       <Flex
         maxW="50%"
         p={2}
-        // borderRadius={10}
         borderTopRightRadius={10}
         borderLeftRadius={10}
         ml={message.sender == wallet ? "auto" : 0}

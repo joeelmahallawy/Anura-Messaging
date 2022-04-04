@@ -1,5 +1,4 @@
 import { Conversation } from "../../interfaces";
-import getMessagesFromJSON from "../../helpers/getConvosFromJSON";
 import { child, get, onValue, ref } from "firebase/database";
 import { database } from "../../firebase";
 
@@ -26,11 +25,13 @@ const getConversations = async (contract, wallet, ipfs?) => {
             messages: message,
           });
         } else {
-          console.log("No data available");
+          alert(
+            "No conversations available here. If you can see this error, please message MoreThanYourAverageJoe#3911 on Discord to fix it, thanks!"
+          );
         }
       })
       .catch((error) => {
-        console.error(error);
+        console.error(error.message);
       });
   }
 
