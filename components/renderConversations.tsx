@@ -96,11 +96,7 @@ const RenderConversations = ({
             >
               <Text textAlign="right" fontWeight="500">
                 Conversation with{" "}
-                <span style={{ fontWeight: "bold" }}>
-                  {convo.messages[0].receiver == wallet
-                    ? convo.messages[0].sender
-                    : convo.messages[0].receiver}
-                </span>
+                <span style={{ fontWeight: "bold" }}>{customName}</span>
               </Text>
               <Box textAlign="right">
                 {convo.messages[convo.messages.length - 1].sender != wallet &&
