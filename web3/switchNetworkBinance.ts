@@ -6,30 +6,30 @@ const switchNetworkBinance = async () => {
       params: [{ chainId: "0x38" }],
     });
   } catch (err) {
-    alert(err.message);
-    // if (err.code === 4902) {
-    //   try {
-    //     // @ts-expect-error
-    //     await window.ethereum.request({
-    //       method: "wallet_addEthereumChain",
-    //       params: [
-    //         {
-    //           chainId: "0x89",
-    //           chainName: "Polygon Mainnet",
-    //           rpcUrls: ["https://polygon-rpc.com/"],
-    //           nativeCurrency: {
-    //             name: "Matic",
-    //             symbol: "Matic",
-    //             decimals: 18,
-    //           },
-    //           blockExplorerUrls: ["https://polygonscan.com/"],
-    //         },
-    //       ],
-    //     });
-    //   } catch (error) {
-    //     alert(error.message);
-    //   }
-    // }
+    // alert(err.message);
+    if (err.code === 4902) {
+      try {
+        // @ts-expect-error
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [
+            {
+              chainId: "0x38",
+              chainName: "Binance Smart Chain Mainnet",
+              rpcUrls: ["https://bsc-dataseed1.ninicoin.io"],
+              nativeCurrency: {
+                name: "BNB",
+                symbol: "BNB",
+                decimals: 18,
+              },
+              blockExplorerUrls: ["https://bscscan.com/"],
+            },
+          ],
+        });
+      } catch (error) {
+        alert(error.message);
+      }
+    }
   }
 };
 

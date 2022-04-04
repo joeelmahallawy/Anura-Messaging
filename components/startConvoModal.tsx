@@ -30,6 +30,7 @@ const startConvoModal = ({ state }) => {
   const initialRef = React.useRef();
   const finalRef = React.useRef();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <>
@@ -50,6 +51,7 @@ const startConvoModal = ({ state }) => {
             onSubmit={async (e) => {
               e.preventDefault();
               if (conversationReceiver.replaceAll(" ", "") != "") {
+                setIsLoading(true);
                 // if input field isn't empty
                 const randomHash = web3.utils.randomHex(64); // generate random hash
 
@@ -75,9 +77,8 @@ const startConvoModal = ({ state }) => {
                         .getCurrentToken()
                         .call();
 
-                      console.log("CURRENT TOKEN ID", currentTokenId);
                       await write(currentTokenId, message); // write message
-
+                      setIsLoading(false);
                       // router.reload(); // FIXME: possible bug here
                       return toast({
                         title: "Conversation started!", // prompt success message
@@ -90,7 +91,10 @@ const startConvoModal = ({ state }) => {
                       alert(err.message);
                     }
                   })
-                  .catch((err) => alert(err.message));
+                  .catch((err) => {
+                    setIsLoading(false);
+                    alert(err.message);
+                  });
               } else {
                 alert("Please enter an address");
               }
@@ -111,7 +115,12 @@ const startConvoModal = ({ state }) => {
               </FormControl>
             </ModalBody>
             <ModalFooter>
-              <Button type="submit" colorScheme="blue" mr={3}>
+              <Button
+                isLoading={isLoading}
+                type="submit"
+                colorScheme="blue"
+                mr={3}
+              >
                 Start
               </Button>
               <Button onClick={onClose}>Cancel</Button>
