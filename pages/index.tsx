@@ -22,47 +22,47 @@ import { onValue, ref, set } from "firebase/database";
 import { useRouter } from "next/router";
 import AlphaTooltip from "../components/alphaTooltip";
 import { ImWarning } from "react-icons/im";
-// import switchNetworkPolygon from "../web3/switchNetworkPolygon";
+import switchNetworkBinance from "../web3/switchNetworkBinance";
 
-const HARMONY_MAIN_NET_CHAIN_ID = 137;
+const BINANCE_MAIN_NET_CHAIN_ID = 56;
 
 const IndexPage = () => {
   const router = useRouter();
   const { toggleColorMode, colorMode } = useColorMode();
   const [state, doFetch] = useAsyncFn(async () => {
-    // if ((await web3.eth.getChainId()) != HARMONY_MAIN_NET_CHAIN_ID) {
-    //   // check if we're not on the right chain
-    //   switchNetworkPolygon()
-    //     .then(async () => {
-    //       router.reload();
-    //     })
-    //     .catch(async () => {
-    //       try {
-    //         await switchNetworkPolygon();
-    //       } catch (err) {
-    //         // if failed, prompt user
-    //         alert(err.message);
-    //       }
-    //     });
-    // } else {
-    // @ts-expect-error
-    if (!window.ethereum) alert("Please install Metamask");
-    try {
-      const contract = await loadContract(); // load contract
+    if ((await web3.eth.getChainId()) != BINANCE_MAIN_NET_CHAIN_ID) {
+      // check if we're not on the right chain
+      switchNetworkBinance()
+        .then(async () => {
+          router.reload();
+        })
+        .catch(async () => {
+          try {
+            await switchNetworkBinance();
+          } catch (err) {
+            // if failed, prompt user
+            alert(err.message);
+          }
+        });
+    } else {
+      // @ts-expect-error
+      if (!window.ethereum) alert("Please install Metamask");
+      try {
+        const contract = await loadContract(); // load contract
 
-      const wallet = await web3.eth.requestAccounts(); // grab wallet from metamask
+        const wallet = await web3.eth.requestAccounts(); // grab wallet from metamask
 
-      const conversations = await getConversations(contract, wallet);
+        const conversations = await getConversations(contract, wallet);
 
-      return {
-        contract,
-        wallet: wallet[0],
-        conversations,
-      };
-    } catch (err) {
-      alert(err.message);
+        return {
+          contract,
+          wallet: wallet[0],
+          conversations,
+        };
+      } catch (err) {
+        alert(err.message);
+      }
     }
-    // }
   }, []);
 
   useEffect(() => {
