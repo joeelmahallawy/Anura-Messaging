@@ -37,7 +37,7 @@ const Footer = () => {
           color="#7289DA"
           _hover={{ color: "#5972CB" }}
           isExternal
-          href="https://discord.gg/PXXj542v9k"
+          href="https://discord.gg/fDHkgfMkGX"
         >
           <FaDiscord />
         </Link>

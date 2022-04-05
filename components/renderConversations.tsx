@@ -15,13 +15,12 @@ import {
 import { Textarea } from "@chakra-ui/textarea";
 import React, { useEffect, useRef, useState } from "react";
 import { Conversation } from "../interfaces";
-import encrypt from "../web3/cryptography/encrypt";
-import sendMessage from "../helpers/sendMessage";
 import RenderMessages from "./renderMessages";
 import { onValue, ref } from "firebase/database";
 import { database } from "../firebase";
 import CustomizeName from "./customizeName";
 import isMyWallet from "../helpers/getOtherUserWallet";
+import submitMessage from "../helpers/getAndSendMessages";
 
 const RenderConversations = ({
   state: { wallet, conversations, contract },
@@ -43,18 +42,13 @@ const RenderConversations = ({
       {/* can also be used as (convos) */}
       {conversations.map((convo, i) => {
         const messageContainer = useRef();
-        const [hasBeenChecked, sethasBeenChecked] = useState(
-          convo.messages.length
-            ? convo.messages[convo.messages.length - 1].sender != wallet
-            : false
-        );
-        const [allMessages, setAllMessages] = useState(convo.messages);
+        const [allMessages, setAllMessages] = useState(convo.messages); // all messages to render
 
         // customize name if it hasn't been given a name already
         const [customName, setCustomName] = useState(
-          isMyWallet(wallet, convo.messages[0].receiver)
-            ? localStorage.getItem(convo.messages[0].sender) ||
-                convo.messages[0].sender
+          isMyWallet(wallet, convo.messages[0].receiver) // if I sent the first message
+            ? localStorage.getItem(convo.messages[0].sender) || // check if there is already a custom name
+                convo.messages[0].sender // if not, just make it the address of the user
             : localStorage.getItem(convo.messages[0].receiver) ||
                 convo.messages[0].receiver
         );
@@ -62,14 +56,16 @@ const RenderConversations = ({
         useEffect(() => {
           const convoRef = ref(database, `convos/${convo.tokenID}`);
           onValue(convoRef, (snapshot) => {
+            // get messages on load
             const { message } = snapshot.val();
             setTimeout(() => {
+              // scroll to bottom
               // @ts-expect-error
               messageContainer?.current?.scrollTop =
                 // @ts-expect-error
                 messageContainer?.current?.scrollHeight;
             }, 1);
-            setAllMessages([...message]);
+            setAllMessages([...message]); // set messages with what we get from snapshot
           });
         }, []);
 
@@ -81,9 +77,9 @@ const RenderConversations = ({
               mt={3}
               onClick={() => {
                 setCurrentModalOpen(i);
-                sethasBeenChecked(true);
                 onOpen();
                 setTimeout(() => {
+                  // scroll to bottom
                   // @ts-expect-error
                   messageContainer?.current?.scrollTop =
                     // @ts-expect-error
@@ -99,13 +95,12 @@ const RenderConversations = ({
                 <span style={{ fontWeight: "bold" }}>{customName}</span>
               </Text>
               <Box textAlign="right">
-                {convo.messages[convo.messages.length - 1].sender != wallet &&
-                  !hasBeenChecked && (
-                    <Box color="white" p={1.5} bg="red" borderRadius={20}>
-                      {" "}
-                      New
-                    </Box>
-                  )}
+                {/* {needsToBeChecked && (
+                  <Box color="white" p={1.5} bg="red" borderRadius={20}>
+                    {" "}
+                    New
+                  </Box>
+                )} */}
               </Box>
             </Button>
             {currentModalOpen == i && (
@@ -118,11 +113,7 @@ const RenderConversations = ({
                 <ModalOverlay />
                 <ModalContent h="85vh">
                   <ModalHeader display="flex" justifyContent="space-between">
-                    <span style={{ fontWeight: "bold" }}>
-                      {/* If customized name, show custom name, otherwise show address */}
-                      {customName}
-                    </span>
-                    {/* TODO: */}
+                    <span style={{ fontWeight: "bold" }}>{customName}</span>
                     <CustomizeName
                       setName={setCustomName}
                       otherWallet={
@@ -173,24 +164,16 @@ const RenderConversations = ({
                                 message && // if message isn't empty
                                 message.trim() // message trim isn't empty
                               ) {
-                                // encrypt message
-                                const encryptedMessageToSend = {
-                                  sender: wallet,
-                                  message: encrypt(convo.secretHash, message),
-                                };
-                                // add it to the current messages
-                                allMessages.push(encryptedMessageToSend);
-                                // update array of messages and rerender for instant changes
-                                setAllMessages([...allMessages]);
-                                // send message
-                                sendMessage(convo, allMessages);
-                                // @ts-ignore
-                                messageBox.current.value = ""; // set message box as empty
-                                setMessage("");
-                                // @ts-expect-error
-                                messageContainer?.current?.scrollTop =
-                                  // @ts-expect-error
-                                  messageContainer?.current?.scrollHeight;
+                                submitMessage(
+                                  message,
+                                  wallet,
+                                  convo,
+                                  setAllMessages,
+                                  allMessages,
+                                  setMessage,
+                                  messageContainer,
+                                  messageBox
+                                );
                               }
                               setMessage(e.currentTarget.value);
                             }}
@@ -207,24 +190,16 @@ const RenderConversations = ({
                                   message && // if message isn't empty
                                   message.trim()
                                 ) {
-                                  // encrypt message
-                                  const encryptedMessageToSend = {
-                                    sender: wallet,
-                                    message: encrypt(convo.secretHash, message),
-                                  };
-                                  // add it to the current messages
-                                  allMessages.push(encryptedMessageToSend);
-                                  // update array of messages and rerender for instant changes
-                                  setAllMessages([...allMessages]);
-                                  // send message
-                                  sendMessage(convo, allMessages);
-                                  // @ts-ignore
-                                  messageBox.current.value = ""; // set message box as empty
-                                  setMessage("");
-                                  // @ts-expect-error
-                                  messageContainer?.current?.scrollTop =
-                                    // @ts-expect-error
-                                    messageContainer?.current?.scrollHeight;
+                                  submitMessage(
+                                    message,
+                                    wallet,
+                                    convo,
+                                    setAllMessages,
+                                    allMessages,
+                                    setMessage,
+                                    messageContainer,
+                                    messageBox
+                                  );
                                 }
                               }}
                             >
